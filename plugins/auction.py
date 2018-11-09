@@ -18,12 +18,17 @@ class AuctionPlugin(Plugin):
       return
 
     item_id = search_response['list'][0]['itemid']
+    data_params = {
+      'itemid': item_id
+    }
+
+    stack = search_response['list'][0]['stackSize']
+
+    if int(stack) != 1:
+      data_params['stack'] = 1
 
     r = requests.post('https://na.nasomi.com/auctionhouse/data/ah-data/searchItem.php',
-                      data={
-                        'itemid': item_id,
-                        'stack': 1
-                      })
+                      data=data_params)
 
     price_response = r.json()
     items = price_response['sale_list']
