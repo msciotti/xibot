@@ -1,0 +1,6 @@
+{
+  "token": "",
+  "bot": {
+    "plugins": ["plugins.auction"]
+  }
+}
