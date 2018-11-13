@@ -1,10 +1,13 @@
 from disco.bot import Plugin
+from disco.types.message import MessageEmbed
 import requests
 import json
 import math
 import urllib
 
 SEARCH_URL = 'http://classicffxi.com/ajax/'
+WIKI_URL = 'https://www.bg-wiki.com/bg/'
+IMAGE_URL = 'https://static.ffxiah.com/images/icon/'
 
 class AuctionPlugin(Plugin):
 
@@ -39,5 +42,19 @@ class AuctionPlugin(Plugin):
       total.append(int(price['sale']))
     total.sort()
     median = total[int(math.floor(len(total)/2))]
+    print median
 
-    event.msg.reply('Median {} price: {} gil'.format(item_name, median))
+    event.msg.reply(**self.create_embed(item_name, item_id, median, formatted_item_name))
+
+  def create_embed(self, item_name, item_id, median_price, formatted_item_name):
+    print formatted_item_name
+    formatted_item_name = urllib.quote_plus(formatted_item_name)
+
+    embed = MessageEmbed()
+    embed.add_field(name='Median Value', value=median_price, inline=True)
+    embed.set_author(name=item_name,
+                     url='{}{}'.format(WIKI_URL, formatted_item_name),
+                     icon_url='{}{}.png'.format(IMAGE_URL, item_id))
+    return {
+      'embed': embed
+    }
