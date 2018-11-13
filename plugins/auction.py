@@ -44,14 +44,15 @@ class AuctionPlugin(Plugin):
     median = total[int(math.floor(len(total)/2))]
     print median
 
-    event.msg.reply(**self.create_embed(item_name, item_id, median, formatted_item_name))
+    event.msg.reply(**self.create_embed(item_name, item_id, median, formatted_item_name, price_response['ahstock']))
 
-  def create_embed(self, item_name, item_id, median_price, formatted_item_name):
+  def create_embed(self, item_name, item_id, median_price, formatted_item_name, stock):
     print formatted_item_name
     formatted_item_name = urllib.quote_plus(formatted_item_name)
 
     embed = MessageEmbed()
     embed.add_field(name='Median Value', value=median_price, inline=True)
+    embed.add_field(name='Current Stock', value=stock, inline=True)
     embed.set_author(name=item_name,
                      url='{}{}'.format(WIKI_URL, formatted_item_name),
                      icon_url='{}{}.png'.format(IMAGE_URL, item_id))
