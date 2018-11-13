@@ -13,7 +13,7 @@ class AuctionPlugin(Plugin):
 
   @Plugin.command('search', '[item_name:str...]')
   def on_auction_Search(self, event, item_name):
-    formatted_item_name = item_name.lower().replace(' ', '_')
+    formatted_item_name = item_name.lower().replace(' ', '_').replace('\'', '').replace(',', '')
     qs = {
       'name': item_name
     }
