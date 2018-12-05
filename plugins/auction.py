@@ -4,6 +4,7 @@ import requests
 import json
 import math
 import urllib
+from datetime import datetime
 
 SEARCH_URL = 'http://classicffxi.com/ajax/'
 WIKI_URL = 'https://www.bg-wiki.com/bg/'
@@ -42,20 +43,28 @@ class AuctionPlugin(Plugin):
       total.append(int(price['sale']))
     total.sort()
     median = total[int(math.floor(len(total)/2))]
-    print median
 
-    event.msg.reply(**self.create_embed(item_name, item_id, median, formatted_item_name, price_response['ahstock']))
+    last_5 = price_response['ahhistory'][0:5]
 
-  def create_embed(self, item_name, item_id, median_price, formatted_item_name, stock):
+    event.msg.reply(**self.create_embed(item_name, item_id, median, formatted_item_name, price_response['ahstock'], last_5))
+
+  def create_embed(self, item_name, item_id, median_price, formatted_item_name, stock, last_5):
     print formatted_item_name
     formatted_item_name = urllib.quote_plus(formatted_item_name)
 
     embed = MessageEmbed()
-    embed.add_field(name='Median Value', value=median_price, inline=True)
-    embed.add_field(name='Current Stock', value=stock, inline=True)
     embed.set_author(name=item_name,
                      url='{}{}'.format(WIKI_URL, formatted_item_name),
                      icon_url='{}{}.png'.format(IMAGE_URL, item_id))
+
+    five_price = five_date = ''
+    for x in last_5:
+      five_price += '\n{}'.format(x['sale'])
+      five_date += '\n{}'.format(datetime.fromtimestamp(x['sell_date']))
+
+    embed.add_field(name='Current Stock', value=stock, inline=False)
+    embed.add_field(name='Last 5 Sold', value=five_price, inline=True)
+    embed.add_field(name='Sell Date', value=five_date, inline=True)
     return {
       'embed': embed
     }
